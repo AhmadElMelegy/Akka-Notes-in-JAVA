@@ -1,28 +1,30 @@
 package controllers;
 
+import Actors.StudentActor;
 import Actors.TeacherActor;
-import Protocols.TeacherProtocol;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import play.*;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 
-import views.html.*;
+import static Protocols.StudentProtocol.InitSignal;
 
 public class Application extends Controller {
 
     public Result index() throws InterruptedException {
 
-        //Initialize the ActorSystem
+        // Initialize the ActorSystem
         final ActorSystem actorSystem = ActorSystem.create("UniversityMessageSystem");
 
-        //construct the Teacher Actor Ref
+        // construct the Teacher Actor Ref
         final ActorRef teacherActorRef = actorSystem.actorOf(Props.create(TeacherActor.class), "teacherActorRef");
 
-        //send a message to the Teacher Actor
-        TeacherProtocol.QuoteRequest response = new TeacherProtocol.QuoteRequest();
-        teacherActorRef.tell(response, teacherActorRef);
+        // construct the Student Actor - pass the teacher actorref as a constructor parameter to StudentActor
+        final ActorRef studentActorRef = actorSystem.actorOf(Props.create(StudentActor.class, teacherActorRef), "studentActorRef");
+
+        InitSignal initSignal = new InitSignal();
+        studentActorRef.tell(initSignal, studentActorRef);
 
         //Let's wait for a couple of seconds before we shut down the system
         Thread.sleep(2000);

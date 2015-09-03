@@ -9,7 +9,8 @@ scalaVersion := "2.11.6"
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-  javaWs
+  javaWs,
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.11" % Test
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the

@@ -20,7 +20,9 @@ public class TeacherActor extends UntypedActor {
 
         if (message instanceof TeacherProtocol.QuoteRequest){
             //Get a random Quote from the list and construct a response
-            String quoteResponse = quotes[new Random().nextInt(quotes.length)];
+            TeacherProtocol.QuoteResponse quoteResponse
+                    = new TeacherProtocol.QuoteResponse(quotes[new Random().nextInt(quotes.length)]);
+            sender().tell(quoteResponse, self());
         }
     }
 }

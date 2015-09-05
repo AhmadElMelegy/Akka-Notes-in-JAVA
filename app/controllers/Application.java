@@ -1,6 +1,7 @@
 package controllers;
 
 import Actors.StudentActor;
+import Actors.StudentDelayedActor;
 import Actors.TeacherActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -21,7 +22,7 @@ public class Application extends Controller {
         final ActorRef teacherActorRef = actorSystem.actorOf(Props.create(TeacherActor.class), "teacherActorRef");
 
         // construct the Student Actor - pass the teacher actorref as a constructor parameter to StudentActor
-        final ActorRef studentActorRef = actorSystem.actorOf(Props.create(StudentActor.class, teacherActorRef), "studentActorRef");
+        final ActorRef studentActorRef = actorSystem.actorOf(Props.create(StudentDelayedActor.class, teacherActorRef), "studentActorRef");
 
         InitSignal initSignal = new InitSignal();
         studentActorRef.tell(initSignal, studentActorRef);

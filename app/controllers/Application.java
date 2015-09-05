@@ -22,10 +22,13 @@ public class Application extends Controller {
         final ActorRef teacherActorRef = actorSystem.actorOf(Props.create(TeacherActor.class), "teacherActorRef");
 
         // construct the Student Actor - pass the teacher actorref as a constructor parameter to StudentActor
-        final ActorRef studentActorRef = actorSystem.actorOf(Props.create(StudentDelayedActor.class, teacherActorRef), "studentActorRef");
+
+        final ActorRef studentActorRef = actorSystem.actorOf(Props.create(StudentActor.class, teacherActorRef), "studentActorRef");
+        final ActorRef studentDelayedActorRef = actorSystem.actorOf(Props.create(StudentDelayedActor.class, teacherActorRef), "studentDelayedActorRef");
 
         InitSignal initSignal = new InitSignal();
         studentActorRef.tell(initSignal, studentActorRef);
+        studentDelayedActorRef.tell(initSignal, studentActorRef);
 
         //Let's wait for a couple of seconds before we shut down the system
         Thread.sleep(2000);

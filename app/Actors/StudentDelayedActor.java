@@ -35,8 +35,8 @@ public class StudentDelayedActor extends UntypedActor {
                     self()
             );
         } else if (message instanceof TeacherProtocol.QuoteResponse) {
-            log.info("Received QuoteResponse from Teacher");
-            log.info("Printing from Student Actor " + ((TeacherProtocol.QuoteResponse) message).quoteResponse);
+            log.info("Received Delayed QuoteResponse from Teacher");
+            log.info("Printing from Delayed Student Actor " + ((TeacherProtocol.QuoteResponse) message).quoteResponse);
         }
 
     }

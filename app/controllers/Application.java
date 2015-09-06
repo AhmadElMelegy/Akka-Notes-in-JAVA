@@ -1,12 +1,7 @@
 package controllers;
 
-import Actors.BasicLifecycleLoggingActor;
-import Actors.StudentActor;
-import Actors.StudentDelayedActor;
-import Actors.TeacherActor;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
+import Actors.*;
+import akka.actor.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -32,13 +27,18 @@ public class Application extends Controller {
         final ActorRef lifeCycleActor = actorSystem.actorOf(Props.create(BasicLifecycleLoggingActor.class),
                 "lifeCycleActor");
 
+        final ActorRef deadLetterListener = actorSystem.actorOf(Props.create(MyCustomDeadLetterListener.class)
+                , "deadLetterListener");
+        actorSystem.eventStream().subscribe(deadLetterListener, DeadLetter.class);
+
         InitSignal initSignal = new InitSignal();
 
         studentActorRef.tell(initSignal, studentActorRef);
         studentDelayedActorRef.tell(initSignal, studentActorRef);
 
+        // lifeCycleActor.tell("stop", studentActorRef);
+        lifeCycleActor.tell(PoisonPill.getInstance(), studentActorRef);
         lifeCycleActor.tell("hello", studentActorRef);
-        lifeCycleActor.tell("stop", studentActorRef);
 
         //Let's wait for a couple of seconds before we shut down the system
         Thread.sleep(2000);
